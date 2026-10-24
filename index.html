@@ -2,7 +2,7 @@
 <html lang="en" class="dark">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>⠀lostboys </title>
 <meta name="robots" content="index, follow">
 <meta name="theme-color" content="#050606">
@@ -833,6 +833,107 @@ html.light .nav-pill{background:linear-gradient(180deg,rgba(255,255,255,.85),rgb
 #fxCanvas{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;max-height:none;transform:none;opacity:0;pointer-events:none;will-change:opacity;transition:opacity .9s ease}
 #fxCanvas.on{opacity:.92}
 .intro-overlay.fx-on #asciiCanvas{opacity:0;transition:opacity .6s ease .45s}
+</style>
+
+<style id="mobile-fixes">
+/* ═══ phone / touch fixes ═══ */
+html{overflow-x:clip}
+button,a,.view-btn,.rail-step{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.showcase{touch-action:pan-y}
+main{padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+
+/* view toggle + member nav were hidden below 1024px, which left phones with no way to
+   switch carousel/grid (and stuck in grid if it was saved from desktop) */
+@media (max-width:1023.98px){
+  .navigator{display:flex;flex-direction:row;justify-content:center;gap:1rem}
+  .rail-wrap{display:none}
+  .view-toggle{flex-direction:row}
+}
+
+/* no sticky hover on touch screens */
+@media (hover:none){
+  .aff-card:hover,.grid-card:hover,.fame-card:hover{transform:none;border-color:var(--card-border)}
+  .aff-card:hover::before,.grid-card:hover::before,.fame-card:hover::before{opacity:0}
+  .aff-card:hover .aff-front{opacity:1;transform:none}
+  .aff-card:hover .aff-back{opacity:0;transform:none}
+}
+
+/* comfortable tap targets */
+@media (pointer:coarse){
+  .icon-btn{width:2.75rem;height:2.75rem}
+  .view-btn{width:2.75rem;height:2.75rem}
+  .mobile-menu .nav-link{min-height:2.75rem;font-size:12px}
+}
+
+@media (max-width:767.98px){
+  .nav{top:calc(.5rem + env(safe-area-inset-top,0px));padding-left:max(1rem,env(safe-area-inset-left,0px));padding-right:max(1rem,env(safe-area-inset-right,0px))}
+  .nav-inner{gap:.25rem}
+  .mobile-menu{border-radius:24px;padding:.5rem}
+  .island-live{max-width:100%;font-size:9px;letter-spacing:.08em}
+  .island-live>span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .intro-skip-hint{font-size:10px;letter-spacing:.18em;white-space:nowrap}
+
+  /* cheaper glass on phones */
+  .fame-card,.grid-card,.carousel-card,.aff-card,.hero-copy,.activity-chip{-webkit-backdrop-filter:blur(12px) saturate(140%);backdrop-filter:blur(12px) saturate(140%)}
+}
+
+@media (max-width:639.98px){
+  /* Hall of Fame */
+  .hall-page{padding:5.5rem max(1rem,env(safe-area-inset-left,0px)) calc(3rem + env(safe-area-inset-bottom,0px))}
+  .hall-header{margin-bottom:2rem}
+  .hall-title{font-size:2.5rem}
+  .fame-grid{gap:1rem}
+  .fame-card{aspect-ratio:auto;min-height:13rem;border-radius:24px}
+  .fame-card-content{padding:1rem}
+  .fame-card-bio{font-size:12px}
+  .fame-card-handle{font-size:11px}
+  .fame-card-status{font-size:11px}
+
+  /* Members */
+  .members-page{padding:5.5rem 1rem calc(3rem + env(safe-area-inset-bottom,0px));gap:1.25rem}
+  .identity-panel{gap:.9rem}
+  .identity-panel .member-name{font-size:clamp(2.25rem,13vw,3.25rem);overflow-wrap:anywhere;max-width:100%}
+  .identity-panel .member-bio{max-width:100%;font-size:.9rem}
+  .member-handle{font-size:13px}
+  .member-role{font-size:11px}
+  .activity-chip{font-size:11px;max-width:100%}
+
+  /* carousel: shorter stage, tighter stack, gentler tilt so cards stay inside the screen */
+  .carousel-container{height:400px;perspective:900px}
+  .carousel-card{width:92%;border-radius:24px}
+  .carousel-card[data-pos="0"]{transform:translate(-50%,-50%) rotateY(-6deg) rotateX(2deg) translateZ(0)}
+  .carousel-card[data-pos="1"]{transform:translate(-50%,-50%) translateY(120px) translateX(10px) rotateY(-6deg) rotateX(2deg) translateZ(-120px)}
+  .carousel-card[data-pos="-1"]{transform:translate(-50%,-50%) translateY(-120px) translateX(10px) rotateY(-6deg) rotateX(2deg) translateZ(-120px)}
+  .carousel-card[data-pos="2"]{transform:translate(-50%,-50%) translateY(200px) translateX(20px) rotateY(-6deg) rotateX(2deg) translateZ(-240px);opacity:0}
+  .carousel-card[data-pos="-2"]{transform:translate(-50%,-50%) translateY(-200px) translateX(20px) rotateY(-6deg) rotateX(2deg) translateZ(-240px)}
+  .carousel-card .card-label{top:.75rem;right:1rem;font-size:8px}
+  .card-presence{top:.75rem;left:1rem}
+
+  /* grid view */
+  .grid-view{gap:1rem}
+  .grid-card{padding:1.75rem 1.25rem;border-radius:24px}
+  .grid-card .member-name{font-size:1.4rem;overflow-wrap:anywhere}
+  .grid-card .member-role{font-size:10px}
+  .grid-card .grid-presence{font-size:9px}
+
+  /* section titles on the remaining pages */
+  .section-head{margin-bottom:2.5rem}
+  .affiliations{padding:4rem 0}
+  .aff-card{height:auto;min-height:22rem}
+  .aff-back img{width:min(18rem,70vw);height:min(18rem,70vw)}
+}
+
+/* very small phones */
+@media (max-width:359.98px){
+  .carousel-container{height:360px}
+  .hero-copy{padding:1rem}
+}
+
+/* landscape phones: short viewport */
+@media (max-height:480px) and (orientation:landscape){
+  .hall-page,.members-page{padding-top:4.5rem}
+  .carousel-container{height:340px}
+}
 </style>
 </head>
 
@@ -2014,8 +2115,7 @@ class Engine {
     if (startX === null || showcase.classList.contains('grid-mode')) return;
     var dx = e.changedTouches[0].clientX - startX;
     var dy = e.changedTouches[0].clientY - startY;
-    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) goTo(index + (dx < 0 ? 1 : -1));
-    else if (Math.abs(dy) > 45 && Math.abs(dy) > Math.abs(dx)) goTo(index + (dy < 0 ? 1 : -1));
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.2) goTo(index + (dx < 0 ? 1 : -1));
     startX = null; startY = null;
   }, { passive: true });
 
