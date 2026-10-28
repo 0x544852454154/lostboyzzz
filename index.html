@@ -935,6 +935,144 @@ main{padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inse
   .carousel-container{height:340px}
 }
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style id="gm-style">
+/* ===== Members: profile + 3D card stack + island (modelled on green.html) ===== */
+.gm{--c1:#092328;--c2:#12544F;--c3:#2A835F;--c4:#8BBB92;--ry:14deg;--spring:cubic-bezier(.34,1.45,.5,1);--mono:"Space Mono",ui-monospace,Menlo,Consolas,monospace;position:relative;isolation:isolate;height:100vh;height:100dvh;overflow:hidden;background:var(--c1);color:var(--c4);font-family:var(--mono);font-weight:400;overscroll-behavior:none}
+.gm *{-webkit-tap-highlight-color:transparent}
+.gm button{font:inherit;color:inherit;margin:0}
+.gm :focus-visible{outline:2px solid var(--c4);outline-offset:3px}
+
+/* slow drifting background */
+.gm-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.gm-bg i{position:absolute;border-radius:50%;filter:blur(90px);will-change:transform}
+.gm-bg i:nth-child(1){width:55vw;height:55vw;left:-12vw;top:-18vw;background:var(--c2);opacity:.6;animation:gmd1 40s ease-in-out infinite alternate}
+.gm-bg i:nth-child(2){width:48vw;height:48vw;right:-10vw;bottom:-16vw;background:var(--c3);opacity:.38;animation:gmd2 52s ease-in-out infinite alternate}
+.gm-bg i:nth-child(3){width:34vw;height:34vw;left:38vw;top:28vh;background:var(--c4);opacity:.1;animation:gmd3 64s ease-in-out infinite alternate}
+@keyframes gmd1{to{transform:translate(22vw,18vh) scale(1.2)}}
+@keyframes gmd2{to{transform:translate(-20vw,-16vh) scale(1.15)}}
+@keyframes gmd3{to{transform:translate(-24vw,-12vh) scale(1.3)}}
+
+.gm-main{position:relative;z-index:1;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 9vw 0 8vw;transition:filter .5s,transform .6s var(--spring)}
+.gm.modal .gm-main{filter:brightness(.4) blur(2px);transform:scale(.985)}
+
+/* profile */
+.gm-me{display:flex;align-items:center;gap:20px;position:relative;z-index:2;min-width:0}
+.gm-me>div{min-width:0}
+.gm-pfp{position:relative;flex:none;width:104px;height:104px;border:0;border-radius:50%;padding:4px;cursor:pointer;background:conic-gradient(var(--c3),var(--c4),var(--c2),var(--c3));transition:transform .45s var(--spring)}
+@media(hover:hover){.gm-pfp:hover{transform:scale(1.07) rotate(-4deg)}}
+.gm-pfp:active{transform:scale(.94)}
+.gm-av{display:block;width:100%;height:100%;border-radius:50%;object-fit:cover;background:var(--c2)}
+.gm-dot,.gm-stat{--sc:#4a6a6a}
+.gm [data-s=online]{--sc:var(--c4)}
+.gm [data-s=idle]{--sc:#d9b44a}
+.gm [data-s=dnd]{--sc:#d9604a}
+.gm-dot{position:absolute;right:2px;bottom:2px;width:22px;height:22px;border-radius:50%;border:4px solid var(--c1);background:var(--sc)}
+.gm-me h1{margin:0;font-family:var(--mono);font-size:clamp(34px,4.4vw,60px);line-height:1;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:var(--c4);overflow-wrap:anywhere}
+.gm-hd{display:block;margin-top:10px;font-size:12px;letter-spacing:.12em;color:var(--c3);overflow-wrap:anywhere}
+
+/* 3D cards */
+.gm-stage{--W:min(52vw,125vh);--s:calc(var(--W)/2 - 41vw);--R:calc(var(--W)*1.15);position:relative;flex:none;width:var(--W);aspect-ratio:5/3;perspective:1500px;touch-action:none;transition:perspective-origin .9s cubic-bezier(.2,.8,.2,1)}
+.gm-card{position:absolute;inset:0;border-radius:28px;overflow:hidden;cursor:pointer;background:var(--c2);border:1px solid rgba(139,187,146,.22);box-shadow:0 40px 80px -24px rgba(0,0,0,.65);transform:translate3d(0,calc(var(--d,0)*103%),calc(var(--a,0)*-140px)) rotateY(var(--ry)) rotateX(calc(var(--d,0)*-4deg)) scale(1);transition:transform .9s cubic-bezier(.2,.8,.2,1),opacity .6s,filter .6s;will-change:transform}
+.gm-card.on{cursor:default}
+.gm-ring{position:absolute;inset:0;pointer-events:none;transform-style:preserve-3d}
+.gm-card.ghost{opacity:0;pointer-events:none}
+.gm.spin .gm-card{transition:opacity .6s,filter .6s}
+.gm-card img{display:block;width:100%;height:100%;max-width:none;object-fit:cover;user-select:none;-webkit-user-select:none}
+.gm-card::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(155deg,rgba(18,84,79,.32),transparent 45%),linear-gradient(0deg,rgba(9,35,40,.7),transparent 45%)}
+.gm-tag{position:absolute;z-index:1;top:18px;right:24px;font-size:10px;letter-spacing:.22em;color:var(--c4)}
+
+.gm-ticks{--n:3;position:absolute;right:20px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;z-index:2}
+.gm-ticks button{--h:min(16px,calc((100dvh - 220px)/var(--n)));width:16px;height:var(--h);padding:max(0px,calc(var(--h)/2 - 1.5px)) 0;border:0;background:var(--c4) content-box;opacity:.3;cursor:pointer;transition:width .45s var(--spring),opacity .3s}
+.gm-ticks button.on{width:28px;opacity:1}
+
+/* dynamic island */
+.gm-scrim{position:absolute;inset:0;z-index:10;background:rgba(3,12,14,.5);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .4s}
+.gm.modal .gm-scrim{opacity:1;pointer-events:auto}
+.gm-island{position:absolute;z-index:20;top:50%;left:50%;translate:-50% -50%;width:126px;height:36px;border-radius:22px;overflow:hidden;background:#04151a;border:1px solid rgba(139,187,146,.2);box-shadow:0 30px 80px -10px rgba(0,0,0,.75),0 0 0 1px rgba(0,0,0,.6),0 0 60px -8px rgba(42,131,95,.5);opacity:0;transition:width .65s var(--spring),height .65s var(--spring),border-radius .65s var(--spring),opacity .2s}
+.gm-island.open{opacity:1;width:min(440px,calc(100vw - 24px));height:min(520px,calc(100dvh - 24px));border-radius:46px}
+.gm-in{position:relative;width:min(440px,calc(100vw - 24px));height:min(520px,calc(100dvh - 24px));padding:32px 26px 24px;overflow-y:auto;scrollbar-width:none;text-align:center}
+.gm-in::-webkit-scrollbar{display:none}
+.gm-in>*{opacity:0;transform:translateY(10px);transition:opacity .3s,transform .45s var(--spring)}
+.gm-island.open .gm-in>*{opacity:1;transform:none}
+.gm-island.open .gm-in>:nth-child(1){transition-delay:.12s}
+.gm-island.open .gm-in>:nth-child(2){transition-delay:.18s}
+.gm-island.open .gm-in>:nth-child(3){transition-delay:.26s}
+.gm-island.open .gm-in>:nth-child(4){transition-delay:.32s}
+.gm-x{position:absolute;top:20px;right:22px;width:30px;height:30px;border:0;border-radius:50%;background:rgba(139,187,146,.12);cursor:pointer;font-size:18px;line-height:1;transition:background .2s}
+.gm-x:hover{background:rgba(139,187,146,.28)}
+.gm-pic{position:relative;width:96px;height:96px;margin:0 auto 18px}
+.gm-pic .gm-av{width:96px;height:96px}
+.gm-pic .gm-dot{right:0;bottom:0;width:28px;height:28px;border:5px solid #04151a}
+.gm-deco{display:none;position:absolute;left:50%;top:50%;width:120%;height:120%;max-width:none;translate:-50% -50%;pointer-events:none}
+.gm-deco.is-on{display:block}
+.gm-who h2{margin:0;font-family:var(--mono);font-size:26px;line-height:1.1;font-weight:700;color:#e6f2e8;letter-spacing:.02em;overflow-wrap:anywhere}
+.gm-un{margin-top:6px;font-size:12px;letter-spacing:.12em;color:var(--c3);overflow-wrap:anywhere}
+.gm-role{margin-top:6px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--c4);opacity:.7;overflow-wrap:anywhere}
+.gm-stat{display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:7px 14px;border-radius:999px;background:rgba(18,84,79,.45);font-size:12px;color:#e6f2e8}
+.gm-stat i{width:9px;height:9px;border-radius:50%;background:var(--sc)}
+.gm-cs{margin-top:10px;font-size:13px;color:var(--c4);overflow-wrap:anywhere}
+.gm-cs:empty,.gm-role:empty{display:none}
+.gm-act{font-size:12px;opacity:.75}
+.gm-rows{margin-top:22px}
+.gm-rows:empty{display:none}
+.gm-row{display:flex;align-items:center;gap:14px;padding:12px 14px;text-align:left;margin-top:8px;border-radius:20px;text-decoration:none;color:inherit;background:rgba(18,84,79,.35);transition:background .25s,transform .35s var(--spring)}
+.gm-row:first-child{margin-top:0}
+.gm-row:hover{background:rgba(42,131,95,.5);transform:scale(1.02)}
+.gm-row i{display:grid;place-items:center;flex:none;width:36px;height:36px;border-radius:12px;background:var(--c1);color:var(--c4)}
+.gm-row svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.gm-row span{flex:1;min-width:0}
+.gm-row b{display:block;font-size:14px;color:#e6f2e8}
+.gm-row small{display:block;font-size:11px;color:var(--c4);opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gm-row em{font-style:normal;color:var(--c4)}
+
+/* side modals (wide desktop): first link on the left, second on the right */
+.gm-island.side{display:none;--sw:clamp(220px,27vw,520px);--sh:min(calc(var(--sw)*1.12),78dvh);--dx:max(31.5vw,calc(var(--sw)*.5 + 250px));transform:translate(0,0) perspective(1000px) rotateY(0deg) rotateZ(0deg);transition:width .65s var(--spring),height .65s var(--spring),border-radius .65s var(--spring),opacity .2s,transform .9s var(--spring)}
+.gm-island.side.open{width:var(--sw);height:var(--sh);border-radius:40px;transform:translate(var(--ix),var(--iy)) perspective(1000px) rotateY(var(--iry)) rotateZ(var(--irz));transition-delay:.08s}
+.gm-island.l{--ix:calc(var(--dx)*-1);--iy:70px;--iry:24deg;--irz:-12deg}
+.gm-island.r{--ix:var(--dx);--iy:40px;--iry:-32deg;--irz:8deg}
+.gm-island.side .gm-in{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;width:var(--sw);height:var(--sh);padding:24px;border-radius:inherit;color:inherit;text-decoration:none}
+.gm-island.side .gm-in:focus-visible{outline-offset:-8px}
+.gm-sico{display:grid;place-items:center;width:clamp(64px,calc(var(--sw)*.2),104px);height:clamp(64px,calc(var(--sw)*.2),104px);border-radius:30%;background:var(--c1);color:var(--c4)}
+.gm-sico svg{width:52%;height:52%;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.gm-stt{font-size:clamp(22px,calc(var(--sw)*.065),34px);line-height:1.1;font-weight:700;letter-spacing:.02em;color:#e6f2e8}
+.gm-sub{font-size:clamp(11px,calc(var(--sw)*.026),14px);letter-spacing:.08em;color:rgba(139,187,146,.8);overflow-wrap:anywhere;max-width:100%;text-align:center}
+.gm-go{margin-top:6px;padding:8px 18px;border-radius:999px;background:rgba(18,84,79,.45);font-size:clamp(12px,calc(var(--sw)*.026),14px);color:#e6f2e8;transition:opacity .3s,transform .45s var(--spring),background .25s}
+@media(hover:hover){.gm-island.side .gm-in:hover .gm-go{background:rgba(42,131,95,.6)}}
+@media(min-width:1200px){
+  .gm-island.side{display:block}
+  .gm-island.side[hidden]{display:none}
+  #gmIsland .gm-row.dup{display:none}
+  #gmIsland.open{height:min(380px,calc(100dvh - 24px))}
+  #gmIsland .gm-in{display:flex;flex-direction:column;height:min(380px,calc(100dvh - 24px))}
+  #gmIsland .gm-who{margin:auto 0}
+  #gmIsland.xr.open,#gmIsland.xr .gm-in{height:min(480px,calc(100dvh - 24px))}
+  #gmIsland.xr .gm-who{margin:0}
+}
+@media(min-width:801px){
+  .gm.modal .gm-stage{perspective-origin:calc(50% + var(--s)) 135%;z-index:3;transform-style:preserve-3d}
+  .gm.modal .gm-card{
+    --ang:calc(var(--m,0)*40deg + var(--rot,0deg));
+    opacity:1!important;filter:none!important;-webkit-backface-visibility:hidden;backface-visibility:hidden;
+    transform:translate3d(calc(var(--s) + var(--R)*sin(var(--ang))),-6%,calc(var(--R)*(cos(var(--ang)) - 1))) rotateY(var(--ang)) rotateX(-4deg) scale(.82);
+  }
+  .gm.modal .gm-card.far{opacity:0!important}
+}
+@media(max-width:800px){
+  .gm-main{flex-direction:column;justify-content:center;gap:28px;overflow:hidden;padding:env(safe-area-inset-top,0px) 6vw calc(36px + env(safe-area-inset-bottom,0px))}
+  .gm-me{gap:14px;max-width:100%}
+  .gm-pfp{width:84px;height:84px}
+  .gm-me h1{font-size:clamp(26px,8vw,40px)}
+  .gm-stage{width:min(84vw,calc(52vh*.8));width:min(84vw,calc(52dvh*.8));aspect-ratio:4/5}
+  .gm-card{border-radius:24px;transform:translate3d(calc(var(--d,0)*103%),0,calc(var(--a,0)*-140px)) rotateY(calc(var(--d,0)*8deg))}
+  .gm-ticks{top:auto;right:auto;left:50%;bottom:calc(12px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);flex-direction:row;gap:4px}
+  .gm-ticks button{--w:min(16px,calc((100vw - 110px)/var(--n) - 4px));width:var(--w);height:24px;padding:10.5px 0}
+  .gm-ticks button.on{width:28px}
+}
+@media(prefers-reduced-motion:reduce){.gm *,.gm *::before,.gm *::after{animation:none!important;transition-duration:.01ms!important}}
+</style>
 </head>
 
 <body class="intro-active">
@@ -1011,43 +1149,47 @@ main{padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inse
   </section>
 
   <section class="view" id="view-members" aria-label="Members">
-    <div class="members-page">
-      <aside class="identity-panel">
-        <div class="avatar-wrapper">
-          <img class="avatar" id="identityAvatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Member avatar">
-          <img class="avatar-deco" id="identityDeco" alt="" aria-hidden="true">
-          <span class="presence-dot" id="identityDot" data-status="offline" title="Offline"></span>
-        </div>
-        <h1 class="member-name" id="identityName">...</h1>
-        <p class="member-handle" id="identityHandle"></p>
-        <p class="member-role" id="identityRole"></p>
-        <p class="member-bio" id="identityBio"></p>
-        <span class="activity-chip hidden" id="identityActivity">
-          <img id="identityActivityIcon" src="" alt="" width="16" height="16">
-          <span class="chip-text" id="identityActivityText"></span>
-        </span>
-      </aside>
+    <div class="gm" id="gm">
+      <div class="gm-bg" aria-hidden="true"><i></i><i></i><i></i></div>
 
-      <section class="showcase" id="showcase" aria-label="Members">
-        <div class="carousel-container">
-          <div class="carousel" id="carousel" role="listbox" aria-label="Member carousel"></div>
+      <div class="gm-main">
+        <div class="gm-me">
+          <button class="gm-pfp" id="gmPfp" type="button" aria-label="Open member profile" aria-haspopup="dialog">
+            <img class="gm-av" alt="Profile picture" src="https://cdn.discordapp.com/embed/avatars/0.png"><span class="gm-dot" id="gmPfpDot" data-s="offline"></span>
+          </button>
+          <div>
+            <h1 id="gmName">Member</h1>
+            <small class="gm-hd" id="gmHandle"></small>
+          </div>
         </div>
-        <div class="grid-view" id="gridView"></div>
-      </section>
+        <div class="gm-stage" id="gmStage" role="listbox" aria-label="Members" aria-live="polite"></div>
+      </div>
 
-      <aside class="navigator">
-        <div class="view-toggle" role="group" aria-label="View mode">
-          <button class="view-btn is-active" type="button" id="viewSingle" aria-label="Carousel view" aria-pressed="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"></rect><circle cx="12" cy="12" r="3"></circle></svg>
-          </button>
-          <button class="view-btn" type="button" id="viewGrid" aria-label="Grid view" aria-pressed="false">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="14" rx="1"></rect><rect width="7" height="7" x="3" y="14" rx="1"></rect></svg>
-          </button>
+      <nav class="gm-ticks" id="gmTicks" aria-label="Members"></nav>
+      <div class="gm-scrim" id="gmScrim"></div>
+
+      <div class="gm-island" id="gmIsland" role="dialog" aria-label="Member profile" inert>
+        <div class="gm-in">
+          <button class="gm-x" id="gmClose" type="button" aria-label="Close">&times;</button>
+          <div class="gm-who">
+            <div class="gm-pic">
+              <img class="gm-av" alt="Profile picture" src="https://cdn.discordapp.com/embed/avatars/0.png">
+              <img class="gm-deco" id="gmDeco" alt="" aria-hidden="true">
+              <span class="gm-dot" data-s="offline"></span>
+            </div>
+            <h2 id="gmMName">Member</h2>
+            <div class="gm-un" id="gmMUn"></div>
+            <div class="gm-role" id="gmRole"></div>
+            <div class="gm-stat" data-s="offline"><i></i><span id="gmSLabel">Offline</span></div>
+            <div class="gm-cs" id="gmCs"></div>
+            <div class="gm-cs gm-act" id="gmAct"></div>
+          </div>
+          <div class="gm-rows" id="gmRows"></div>
         </div>
-        <div class="rail-wrap">
-          <div class="rail" id="rail" role="tablist" aria-label="Member navigation"></div>
-        </div>
-      </aside>
+      </div>
+
+      <div class="gm-island side l" id="gmSideL" role="group" aria-label="Link" inert hidden></div>
+      <div class="gm-island side r" id="gmSideR" role="group" aria-label="Link" inert hidden></div>
     </div>
   </section>
 </main>
@@ -1816,7 +1958,7 @@ class Engine {
 
   var curRoute = null, swapT = 0, siteIn = false, navPill = document.getElementById('navPill');
   function stagger(v) {
-    v.querySelectorAll('.hall-header,.fame-card,.identity-panel,.showcase,.navigator,.hero-inner > *').forEach(function (el, i) { el.classList.add('fx'); el.style.setProperty('--i', Math.min(i, 10)); });
+    v.querySelectorAll('.hall-header,.fame-card,.gm-me,.gm-stage,.hero-inner > *').forEach(function (el, i) { el.classList.add('fx'); el.style.setProperty('--i', Math.min(i, 10)); });
   }
   function enterView(v, base) { if (!v) return; stagger(v); v.style.setProperty('--base', base + 'ms'); void v.offsetWidth; v.classList.add('in'); }
   function placePill() {
@@ -1995,175 +2137,259 @@ class Engine {
     }).join('');
   }
 
-  var showcase = document.getElementById('showcase');
-  var carousel = document.getElementById('carousel');
-  var rail = document.getElementById('rail');
-  var gridView = document.getElementById('gridView');
-  var idAvatar = document.getElementById('identityAvatar');
-  var idDeco = document.getElementById('identityDeco');
-  var idName = document.getElementById('identityName');
-  var idHandle = document.getElementById('identityHandle');
-  var idRole = document.getElementById('identityRole');
-  var idBio = document.getElementById('identityBio');
-  var viewSingle = document.getElementById('viewSingle');
-  var viewGrid = document.getElementById('viewGrid');
+  /* ---------- Members: profile + 3D card stack + island (modelled on green.html) ----------
+     Each card is a member's banner. The profile on the left follows the card on top,
+     clicking the avatar opens the island with that member's details and links.
+     Optional per-member fields in MEMBERS: spotify:'https://…', instagram:'https://…' (plus role, bio). */
+  var gm = document.getElementById('gm');
+  var gmStage = document.getElementById('gmStage');
+  var gmTicks = document.getElementById('gmTicks');
+  var gmPfp = document.getElementById('gmPfp');
+  var gmIsland = document.getElementById('gmIsland');
+  var gmSideL = document.getElementById('gmSideL');
+  var gmSideR = document.getElementById('gmSideR');
+  var gmClose = document.getElementById('gmClose');
+  var gmScrim = document.getElementById('gmScrim');
+  var gmRows = document.getElementById('gmRows');
+  var gmIslands = [gmIsland, gmSideL, gmSideR];
+  var mobileMQ = window.matchMedia('(max-width:800px)');
 
   var index = 0;
   var total = MEMBERS.length;
+  var linksFor = -1;
 
-  function buildCarousel() {
-    carousel.innerHTML = MEMBERS.map(function (m, i) {
-      var initialImg = m.banner ? m.banner : 'https://cdn.discordapp.com/embed/avatars/0.png';
-      return '<div class="carousel-card" data-index="' + i + '" role="option" aria-selected="' + (i === index) + '">' +
-        '<div class="card-overlay"></div>' +
-        '<span class="card-label">MEMBER / #' + pad(i + 1) + '</span>' +
-        '<div class="card-presence" data-status="offline"><span class="dot"></span><span class="presence-label">Offline</span></div>' +
-        '<img src="' + initialImg + '" alt="">' +
-      '</div>';
-    }).join('');
+  var GM_ICONS = {
+    spotify: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M7 9.4c3.6-1 7.4-.7 10.4 1.1M7.6 12.7c3-.8 6-.5 8.6 1M8.2 15.7c2.4-.6 4.6-.4 6.6.7"/></svg>',
+    instagram: '<svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".6"/></svg>',
+    discord: '<svg viewBox="0 0 24 24"><path d="M5 5.5h14A1.5 1.5 0 0 1 20.5 7v9a1.5 1.5 0 0 1-1.5 1.5h-7L8 21v-3.5H5A1.5 1.5 0 0 1 3.5 16V7A1.5 1.5 0 0 1 5 5.5Z"/><path d="M9 11.5h.01M15 11.5h.01"/></svg>'
+  };
+
+  function defaultAvatar(id) {
+    try { return 'https://cdn.discordapp.com/embed/avatars/' + Number((BigInt(id) >> BigInt(22)) % BigInt(6)) + '.png'; }
+    catch (e) { return 'https://cdn.discordapp.com/embed/avatars/0.png'; }
   }
 
-  function updatePositions() {
-    var cards = carousel.querySelectorAll('.carousel-card');
-    cards.forEach(function (card, i) {
-      var diff = i - index;
-      var pos;
-      if (diff === 0) pos = '0';
-      else if (diff === 1) pos = '1';
-      else if (diff === -1) pos = '-1';
-      else if (diff === 2) pos = '2';
-      else if (diff === -2) pos = '-2';
-      else pos = 'hidden';
+  function safeUrl(u) {
+    return (typeof u === 'string' && /^https?:\/\//i.test(u.trim())) ? u.trim() : '';
+  }
 
-      if (pos === 'hidden') {
-        card.setAttribute('data-pos', 'hidden');
-        card.style.opacity = '0';
-        card.style.pointerEvents = 'none';
-        card.style.transform = 'translate(-50%,-50%) rotateY(-12deg) rotateX(4deg) translateZ(-500px)';
-        card.style.zIndex = '0';
-        return;
-      }
-      card.style.opacity = '';
-      card.style.transform = '';
-      card.style.zIndex = '';
-      card.setAttribute('data-pos', pos);
-      card.style.pointerEvents = (pos === '0') ? 'auto' : 'none';
-      card.setAttribute('aria-selected', i === index ? 'true' : 'false');
+  function handleFromUrl(u) {
+    try {
+      var p = new URL(u).pathname.split('/').filter(Boolean);
+      return p.length ? '@' + p[0] : '';
+    } catch (e) { return ''; }
+  }
+
+  function memberLinks(m) {
+    var out = [], sp = safeUrl(m.spotify), ig = safeUrl(m.instagram);
+    if (sp) out.push({ t: 'Spotify', s: 'Listen on Spotify', u: sp, i: GM_ICONS.spotify });
+    if (ig) out.push({ t: 'Instagram', s: handleFromUrl(ig) || 'View profile', u: ig, i: GM_ICONS.instagram });
+    out.push({ t: 'Discord', s: 'Open Discord profile', u: 'https://discord.com/users/' + encodeURIComponent(m.discordId), i: GM_ICONS.discord });
+    return out;
+  }
+
+  function buildLinks() {
+    if (linksFor === index) return;
+    linksFor = index;
+    var L = memberLinks(MEMBERS[index]);
+    // the first two links also get their own side modal on wide screens; the island lists them all
+    gmRows.innerHTML = L.map(function (l, i) {
+      return '<a class="gm-row' + (i < 2 ? ' dup' : '') + '" href="' + escapeHTML(l.u) + '" target="_blank" rel="noopener noreferrer">' +
+        '<i>' + l.i + '</i><span><b>' + escapeHTML(l.t) + '</b><small>' + escapeHTML(l.s) + '</small></span><em>&#8599;</em></a>';
+    }).join('');
+    gmIsland.classList.toggle('xr', L.length > 2);
+    [gmSideL, gmSideR].forEach(function (el, k) {
+      var l = L[k];
+      el.hidden = !l;
+      el.setAttribute('aria-label', l ? l.t : 'Link');
+      el.innerHTML = l
+        ? '<a class="gm-in" href="' + escapeHTML(l.u) + '" target="_blank" rel="noopener noreferrer">' +
+            '<i class="gm-sico">' + l.i + '</i><b class="gm-stt">' + escapeHTML(l.t) + '</b>' +
+            '<small class="gm-sub">' + escapeHTML(l.s) + '</small><span class="gm-go">Open &#8599;</span></a>'
+        : '';
+    });
+  }
+
+  function buildStage() {
+    var h = '';
+    MEMBERS.forEach(function (m, i) {
+      h += '<div class="gm-card" role="option" aria-label="Member ' + (i + 1) + '">' +
+        '<img src="' + escapeHTML(m.banner || defaultAvatar(m.discordId)) + '" alt="" draggable="false">' +
+        '<span class="gm-tag">MEMBER / ' + pad(i + 1) + '</span></div>';
+    });
+    h += '<div class="gm-ring"></div>';
+    gmStage.innerHTML = h;
+    gmStage.querySelectorAll(':scope>.gm-card').forEach(function (c, i) {
+      c.addEventListener('click', function () { go(i); });
     });
 
+    gmTicks.style.setProperty('--n', total);
+    MEMBERS.forEach(function (m, i) {
+      var t = document.createElement('button');
+      t.type = 'button';
+      t.setAttribute('aria-label', 'Member ' + (i + 1));
+      t.addEventListener('click', function () { go(i); });
+      gmTicks.appendChild(t);
+    });
+  }
+
+  function render() {
+    gmStage.querySelectorAll(':scope>.gm-card').forEach(function (c, i) {
+      var d = i - index, a = Math.abs(d);
+      c.style.setProperty('--d', d);
+      c.style.setProperty('--a', a);
+      c.style.opacity = a > 1 ? 0 : a ? 0.4 : 1;
+      c.style.filter = a ? 'brightness(.55) saturate(.8)' : 'none';
+      c.style.pointerEvents = a > 1 ? 'none' : 'auto';
+      c.classList.toggle('on', !a);
+      c.setAttribute('aria-selected', a ? 'false' : 'true');
+    });
+    Array.prototype.forEach.call(gmTicks.children, function (t, i) { t.classList.toggle('on', i === index); });
+    renderMember();
+  }
+
+  function go(i) {
+    if (gm.classList.contains('modal')) return;
+    index = Math.max(0, Math.min(total - 1, i));
+    render();
+  }
+  function next() { go(index + 1); }
+  function prev() { go(index - 1); }
+
+  // fills the profile, island and side modals for the member on top from the latest presence
+  function renderMember() {
     var m = MEMBERS[index];
-    idName.textContent = displayName(m, presenceCache[m.discordId]);
-    idHandle.textContent = handleText(m, presenceCache[m.discordId]);
-    idRole.textContent = roleText(m, presenceCache[m.discordId]);
+    if (!m) return;
+    var data = presenceCache[m.discordId];
+    var user = data && data.discord_user;
+    var status = data ? data.discord_status : 'offline';
 
-    renderPresence();
-
-    var steps = rail.querySelectorAll('.rail-step');
-    steps.forEach(function (s, i) {
-      var on = i === index;
-      s.classList.toggle('is-active', on);
-      s.setAttribute('aria-selected', on ? 'true' : 'false');
-      if (on) {
-        var rTop = rail.scrollTop;
-        var rBottom = rTop + rail.clientHeight;
-        var sTop = s.offsetTop;
-        var sBottom = sTop + s.offsetHeight;
-        if (sTop < rTop) rail.scrollTop = sTop - 8;
-        else if (sBottom > rBottom) rail.scrollTop = sBottom - rail.clientHeight + 8;
-      }
+    var avatar = (user && user.avatar) ? getAvatarUrl(user.id, user.avatar) : defaultAvatar(m.discordId);
+    gm.querySelectorAll('.gm-av').forEach(function (img) {
+      if (img.getAttribute('src') !== avatar) img.src = avatar;
     });
-  }
 
-  function buildRail() {
-    rail.innerHTML = MEMBERS.map(function (m, i) {
-      return '<button class="rail-step' + (i === index ? ' is-active' : '') + '" type="button" role="tab" aria-label="Go to member ' + (i + 1) + '" aria-selected="' + (i === index) + '"><span>' + pad(i + 1) + '</span></button>';
-    }).join('');
-    rail.querySelectorAll('.rail-step').forEach(function (btn, i) {
-      btn.addEventListener('click', function () { goTo(i); });
+    var name = displayName(m, data);
+    var handle = handleText(m, data) || ('id ' + m.discordId);
+    document.getElementById('gmName').textContent = name;
+    document.getElementById('gmMName').textContent = name;
+    document.getElementById('gmHandle').textContent = handle;
+    document.getElementById('gmMUn').textContent = handle;
+    document.getElementById('gmRole').textContent = roleText(m, data);
+
+    gm.querySelectorAll('[data-s]').forEach(function (e) { e.setAttribute('data-s', status); });
+    document.getElementById('gmPfpDot').title = statusLabel(status);
+    document.getElementById('gmSLabel').textContent = statusLabel(status);
+
+    applyDeco(document.getElementById('gmDeco'), user);
+
+    document.getElementById('gmCs').textContent = bioText(m, data);
+    // activityLabel() would read a custom status as an activity ("Doing"), so leave those out here
+    var act = data ? activityLabel({
+      listening_to_spotify: data.listening_to_spotify,
+      spotify: data.spotify,
+      activities: (data.activities || []).filter(function (a) { return a && a.type !== 4; })
+    }) : null;
+    document.getElementById('gmAct').textContent = act ? (act.type === 'spotify' ? 'Spotify \u00b7 ' : '') + act.text : '';
+
+    // members without a banner fall back to their Discord banner / avatar
+    gmStage.querySelectorAll(':scope>.gm-card').forEach(function (c, i) {
+      var mm = MEMBERS[i];
+      if (mm.banner) return;
+      var d = presenceCache[mm.discordId], u = d && d.discord_user;
+      var src = u ? (getBannerUrl(u.id, u.banner) || getAvatarUrl(u.id, u.avatar)) : defaultAvatar(mm.discordId);
+      var im = c.querySelector('img');
+      if (im && im.getAttribute('src') !== src) im.src = src;
     });
+
+    buildLinks();
   }
 
-  function buildGrid() {
-    gridView.innerHTML = MEMBERS.map(function (m) {
-      return '<article class="grid-card" data-id="' + escapeHTML(m.discordId) + '">' +
-        '<div class="grid-presence" data-status="offline"><span class="dot"></span><span class="grid-presence-label">Offline</span></div>' +
-        '<div class="avatar-wrapper">' +
-          '<img class="avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">' +
-          '<img class="avatar-deco" alt="" aria-hidden="true">' +
-        '</div>' +
-        '<h3 class="member-name">' + escapeHTML(displayName(m, null)) + '</h3>' +
-        '<p class="member-role">' + escapeHTML(m.role || '') + '</p>' +
-        '<p class="member-bio">' + escapeHTML(m.bio || '') + '</p>' +
-      '</article>';
-    }).join('');
+  /* ---- island + ring spin ---- */
+  var rot = 0, raf = 0, t0 = 0, spinT = 0;
+  function tick(t) {
+    rot = (rot - Math.min(t - t0, 250) * 0.012) % 360;
+    t0 = t;
+    gmStage.style.setProperty('--rot', rot + 'deg');
+    raf = requestAnimationFrame(tick);
+  }
+  function startSpin() { gm.classList.add('spin'); t0 = performance.now(); raf = requestAnimationFrame(tick); }
+  function stopSpin() { clearTimeout(spinT); cancelAnimationFrame(raf); gm.classList.remove('spin'); }
+
+  // lays the cards out on a 9-slot ring centred on the member on top; gaps are filled with copies
+  function layoutRing() {
+    var n = total, cards = gmStage.querySelectorAll(':scope>.gm-card'), ring = gmStage.querySelector('.gm-ring'), seen = {};
+    cards.forEach(function (c, i) {
+      var w = ((i - index) % n + n) % n;
+      if (w > n / 2) w -= n;
+      c.style.setProperty('--m', w);
+      c.classList.toggle('far', Math.abs(w) > 4);
+      if (Math.abs(w) <= 4) seen[w] = true;
+    });
+    ring.innerHTML = '';
+    for (var k = -4; k <= 4; k++) {
+      if (seen[k]) continue;
+      var j = ((index + k) % n + n) % n, g = document.createElement('div');
+      g.className = 'gm-card ghost';
+      g.setAttribute('aria-hidden', 'true');
+      g.style.setProperty('--m', k);
+      g.innerHTML = '<img src="' + escapeHTML(cards[j].querySelector('img').getAttribute('src')) + '" alt="" draggable="false">' +
+        '<span class="gm-tag">MEMBER / ' + pad(j + 1) + '</span>';
+      ring.appendChild(g);
+    }
   }
 
-  function goTo(i) { index = (i + total) % total; updatePositions(); }
-  function next() { goTo(index + 1); }
-  function prev() { goTo(index - 1); }
+  function toggle(open) {
+    stopSpin();
+    if (open) {
+      layoutRing();
+      rot = 0;
+      gmStage.style.setProperty('--rot', '0deg');
+      if (!mobileMQ.matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) spinT = setTimeout(startSpin, 950);
+    }
+    gm.classList.toggle('modal', open);
+    gmIslands.forEach(function (e) { e.classList.toggle('open', open); e.inert = !open; });
+    (open ? gmClose : gmPfp).focus({ preventScroll: true });
+  }
+  gmPfp.addEventListener('click', function () { toggle(true); });
+  gmClose.addEventListener('click', function () { toggle(false); });
+  gmScrim.addEventListener('click', function () { toggle(false); });
+  window.addEventListener('hashchange', function () { if (gm.classList.contains('modal')) toggle(false); });
+
+  /* ---- navigation: keys, wheel, swipe ---- */
+  function membersActive() { return views['/members'].classList.contains('active'); }
 
   document.addEventListener('keydown', function (e) {
-    if (!views['/members'].classList.contains('active')) return;
-    if (showcase.classList.contains('grid-mode')) return;
-    if (e.target.matches('input, textarea, select')) return;
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); next(); }
+    if (!membersActive()) return;
+    if (e.key === 'Escape' && gm.classList.contains('modal')) { toggle(false); return; }
+    if (gm.classList.contains('modal')) return;
+    if (e.target.matches && e.target.matches('input, textarea, select')) return;
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown') { e.preventDefault(); next(); }
   });
 
-  var startX = null, startY = null;
-  showcase.addEventListener('touchstart', function (e) {
-    if (showcase.classList.contains('grid-mode')) return;
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-  }, { passive: true });
-  showcase.addEventListener('touchend', function (e) {
-    if (startX === null || showcase.classList.contains('grid-mode')) return;
-    var dx = e.changedTouches[0].clientX - startX;
-    var dy = e.changedTouches[0].clientY - startY;
-    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.2) goTo(index + (dx < 0 ? 1 : -1));
-    startX = null; startY = null;
-  }, { passive: true });
-
-  // --- SCROLL-TO-NAVIGATE FOR THE WHOLE MEMBERS PAGE ---
-  // Scroll anywhere on the page to advance members. One scroll gesture = one member.
-  var scrollAccum = 0;
-  var scrollIdleTimer = null;
-  var SCROLL_THRESHOLD = 80;
-
-  function resetScrollAccumSoon() {
-    if (scrollIdleTimer) clearTimeout(scrollIdleTimer);
-    scrollIdleTimer = setTimeout(function () {
-      scrollAccum = 0;
-    }, 200);
-  }
-
+  var scrollAccum = 0, scrollIdleTimer = null, SCROLL_THRESHOLD = 80;
   window.addEventListener('wheel', function (e) {
-    if (!views['/members'].classList.contains('active')) return;
-    if (showcase.classList.contains('grid-mode')) return;
-
+    if (!membersActive() || e.ctrlKey) return;
+    if (gm.classList.contains('modal')) return;   // let the island scroll on its own
     e.preventDefault();
     scrollAccum += e.deltaY;
-
     if (Math.abs(scrollAccum) >= SCROLL_THRESHOLD) {
-      if (scrollAccum > 0) next();
-      else prev();
+      if (scrollAccum > 0) next(); else prev();
       scrollAccum = 0;
     }
-    resetScrollAccumSoon();
+    if (scrollIdleTimer) clearTimeout(scrollIdleTimer);
+    scrollIdleTimer = setTimeout(function () { scrollAccum = 0; }, 200);
   }, { passive: false });
 
-  function setView(mode) {
-    var isGrid = mode === 'grid';
-    showcase.classList.toggle('grid-mode', isGrid);
-    viewGrid.classList.toggle('is-active', isGrid);
-    viewSingle.classList.toggle('is-active', !isGrid);
-    viewGrid.setAttribute('aria-pressed', isGrid ? 'true' : 'false');
-    viewSingle.setAttribute('aria-pressed', isGrid ? 'false' : 'true');
-    try { localStorage.setItem('membersView', mode); } catch (e) {}
-    renderPresence();
-  }
-  viewGrid.addEventListener('click', function () { setView('grid'); });
-  viewSingle.addEventListener('click', function () { setView('single'); });
+  var touchX = 0, touchY = 0;
+  gm.addEventListener('touchstart', function (e) { touchX = e.touches[0].clientX; touchY = e.touches[0].clientY; }, { passive: true });
+  gm.addEventListener('touchend', function (e) {
+    if (gm.classList.contains('modal')) return;
+    var t = e.changedTouches[0], dx = touchX - t.clientX, dy = touchY - t.clientY;
+    var mo = mobileMQ.matches ? [dx, dy] : [dy, dx];
+    if (Math.abs(mo[0]) > 40 && Math.abs(mo[0]) > Math.abs(mo[1])) go(index + (mo[0] > 0 ? 1 : -1));
+  });
 
   var LANYARD_REST_BASE = 'https://api.lanyard.rest/v1/users/';
   var LANYARD_SOCKET_URL = 'wss://api.lanyard.rest/socket';
@@ -2383,118 +2609,12 @@ class Engine {
       if (bioEl && member) bioEl.textContent = bioText(member, data);
     });
 
-    var m = MEMBERS[index];
-    if (!m) return;
-    var data = presenceCache[m.discordId];
-    var status = data ? data.discord_status : 'offline';
-    var user = data && data.discord_user;
-
-    var dot = document.getElementById('identityDot');
-    if (dot) { dot.setAttribute('data-status', status); dot.title = statusLabel(status); }
-
-    if (user) {
-      idAvatar.src = getAvatarUrl(user.id, user.avatar);
-    } else {
-      idAvatar.src = 'https://cdn.discordapp.com/embed/avatars/0.png';
-    }
-
-    applyDeco(idDeco, user);
-
-    idName.textContent = displayName(m, data);
-    idHandle.textContent = handleText(m, data);
-    idRole.textContent = roleText(m, data);
-
-    if (idBio) idBio.textContent = bioText(m, data);
-
-    var chip = document.getElementById('identityActivity');
-    var chipIcon = document.getElementById('identityActivityIcon');
-    var chipText = document.getElementById('identityActivityText');
-    var act = data ? activityLabel(data) : null;
-
-    if (act) {
-      chip.classList.remove('hidden');
-      chip.classList.toggle('spotify', act.type === 'spotify');
-      chipText.innerHTML = '<span class="chip-label">' +
-        (act.type === 'spotify' ? 'Spotify' : 'Activity') +
-        '</span> · ' + escapeHTML(act.text);
-      if (act.icon) { chipIcon.src = act.icon; chipIcon.style.display = ''; }
-      else { chipIcon.style.display = 'none'; }
-    } else {
-      chip.classList.add('hidden');
-    }
-
-    var card = carousel.querySelector('.carousel-card[data-pos="0"]');
-    if (card) {
-      var img = card.querySelector('img');
-      if (img) {
-        if (m.banner) {
-          img.src = m.banner;
-        } else if (user) {
-          var bannerUrl = getBannerUrl(user.id, user.banner);
-          if (bannerUrl) {
-             img.src = bannerUrl;
-          } else {
-             img.src = getAvatarUrl(user.id, user.avatar);
-          }
-        } else {
-          img.src = 'https://cdn.discordapp.com/embed/avatars/0.png';
-        }
-      }
-
-      var badge = card.querySelector('.card-presence');
-      if (badge) {
-        badge.setAttribute('data-status', status);
-        var lbl = badge.querySelector('.presence-label');
-        if (lbl) lbl.textContent = statusLabel(status);
-      }
-    }
-
-    gridView.querySelectorAll('.grid-card').forEach(function (gc) {
-      var gId = gc.getAttribute('data-id');
-      var gData = presenceCache[gId];
-      var gStatus = gData ? gData.discord_status : 'offline';
-      var gUser = gData && gData.discord_user;
-
-      var gImg = gc.querySelector('.avatar');
-      if (gImg) {
-        if (gUser) {
-          gImg.src = getAvatarUrl(gUser.id, gUser.avatar);
-        } else {
-          gImg.src = 'https://cdn.discordapp.com/embed/avatars/0.png';
-        }
-      }
-
-      applyDeco(gc.querySelector('.avatar-deco'), gUser);
-
-      var gNameEl = gc.querySelector('.member-name');
-      var gMember = memberFromId(gId);
-      if (gNameEl && gMember) gNameEl.textContent = displayName(gMember, gData);
-
-      var gRoleEl = gc.querySelector('.member-role');
-      if (gRoleEl && gMember) gRoleEl.textContent = roleText(gMember, gData);
-
-      var gBioEl = gc.querySelector('.member-bio');
-      if (gBioEl && gMember) gBioEl.textContent = bioText(gMember, gData);
-
-      var gp = gc.querySelector('.grid-presence');
-      if (gp) {
-        gp.setAttribute('data-status', gStatus);
-        var gl = gp.querySelector('.grid-presence-label');
-        if (gl) gl.textContent = statusLabel(gStatus);
-      }
-    });
+    renderMember();
   }
 
   buildHallOfFame();
-  buildCarousel();
-  buildRail();
-  buildGrid();
-
-  var savedView = null;
-  try { savedView = localStorage.getItem('membersView'); } catch (e) {}
-  if (savedView === 'grid') setView('grid');
-
-  updatePositions();
+  buildStage();
+  render();
   applyRoute();
 })();
 </script>
